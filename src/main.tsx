@@ -17,7 +17,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 					<Route path="/" element={<App />} />
 					<Route path="newsitem" element={<NewsItem />} />
 				</Routes>
-				<App />
 			</BrowserRouter>
 		</Provider>
 	</React.StrictMode >
