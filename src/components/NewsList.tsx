@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import data from '../../server/data.json'
 
 type newsItem = {
@@ -15,7 +17,9 @@ function NewsItem({ newsItem }: props) {
 	return (
 		<li
 			className='mt-2 bg-orange-100 border-orange-200 border-2'>
-			<b className='font-semibold'>{newsItem.title}</b>
+			<b className='font-semibold'>
+				<Link to="/newsitem">{newsItem.title}</Link>
+			</b>
 			<p className='text-slate-700'>
 				{newsItem.rating} points {}
 				by {newsItem.author}
