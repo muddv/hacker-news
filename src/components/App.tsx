@@ -3,7 +3,6 @@ import { increment } from '../stores/counterSlice'
 import { Header } from './Header'
 import { NewsList } from './NewsList'
 
-
 function Counter() {
 	
 	const count = useAppSelector((state) => state.counter.value)

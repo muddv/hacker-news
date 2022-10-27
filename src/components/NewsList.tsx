@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 
-import data from '../../server/data.json'
+import { useAppSelector, useAppDispatch } from '../hooks/hooks'
+import { update } from '../stores/storiesSlice'
+
 
 type newsItem = {
 	title: string,
@@ -11,6 +13,19 @@ type newsItem = {
 
 type props = {
 	newsItem: newsItem
+}
+
+function NewNews() {
+	const news = useAppSelector((state) => state.news.map(item => item.title))
+	const dispatch = useAppDispatch()
+	return (
+		<div>
+			<p>{news}</p>
+			<button onClick={() => dispatch(update())}>
+				update
+			</button>
+		</div>
+	)
 }
 
 function NewsItem({ newsItem }: props) {
@@ -30,16 +45,10 @@ function NewsItem({ newsItem }: props) {
 }
 
 export function NewsList() {
-
-	const newsSection = data.map(item =>
-		<NewsItem newsItem={item}
-			key={Math.random()}
-		/>
-	)
 	return (
-		<ul className='w-3/5'>
-			{newsSection}
-		</ul>
+		<div className='w-3/5'>
+			<NewNews />
+		</div>
 	)
 }
 
