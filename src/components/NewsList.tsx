@@ -1,44 +1,53 @@
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { useAppSelector, useAppDispatch } from '../hooks/hooks'
-import { update } from '../stores/storiesSlice'
-
-
-type newsItem = {
-	title: string,
-	rating: string,
-	author: string,
-	date: string
-}
+import { selectStories, update, fetchStories, Story } from '../stores/storiesSlice'
 
 type props = {
-	newsItem: newsItem
+	story: Story
 }
 
 function NewNews() {
-	const news = useAppSelector((state) => state.news.map(item => item.title))
+	const news = useSelector(selectStories)
 	const dispatch = useAppDispatch()
+
+	const storiesStatus = useSelector(selectStories)
+
+	useEffect(() => {
+		if (storiesStatus.status === 'idle') {
+			console.log("HERE")
+			dispatch(fetchStories())
+		}
+	}, [storiesStatus, dispatch])
+
+	let storySection = storiesStatus.stories
+		.filter(story => story !== null)
+		.map(story => <NewsItem story={story} />)
+
 	return (
 		<div>
-			<p>{news}</p>
-			<button onClick={() => dispatch(update())}>
+			<p>{storiesStatus.status}</p>
+			<p>{storiesStatus.status === 'succeeded' ? storySection : "loading"}</p>
+			<button onClick={() => console.log(storiesStatus)}>
 				update
 			</button>
 		</div>
 	)
 }
 
-function NewsItem({ newsItem }: props) {
+function NewsItem({ story }: props) {
 	return (
 		<li
 			className='mt-2 bg-orange-100 border-orange-200 border-2'>
 			<b className='font-semibold'>
-				<Link to="/newsitem">{newsItem.title}</Link>
+				<Link to="/newsitem">{story.title}</Link>
 			</b>
 			<p className='text-slate-700'>
-				{newsItem.rating} points {}
-				by {newsItem.author}
-				{} {newsItem.date}
+				{story.score} points {}
+				by {story.by}
+				{} {story.time}
 			</p>
 		</li>
 	)

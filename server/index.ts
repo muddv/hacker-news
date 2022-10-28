@@ -9,7 +9,7 @@ const app = express()
 const port = process.env.PORT
 
 
-app.get('/favicon.ico', (req, res) => res.status(204))
+app.get('favicon.ico', (req, res) => res.status(204))
 
 app.get('/news', (req, res) => {
 	res.json(storyData)
@@ -18,6 +18,6 @@ app.get('/news', (req, res) => {
 await getLatestStories()
 
 app.listen(port, () => {
-	console.log(`[server]: Server is listening at localhost:${port}`)
+	console.log(`[server]: Server is listening at http://localhost:${port}`)
 })
 

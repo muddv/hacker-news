@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
-interface Story {
+export interface Story {
 	by: string,
 	descendants: number,
 	id: number,
@@ -13,35 +13,56 @@ interface Story {
 	url: string
 }
 
-let initialState: Story[] = [{
-	by: "loading...",
-	descendants: 0,
-	id: 0,
-	kids: [0],
-	score: 0,
-	title: "loading...",
-	time: 0,
-	type: "story",
-	url: "n/a"
-}]
+interface StoriesState {
+	stories: Story[],
+	status: string,
+	//TODO think about error type
+	error: string | undefined | null
+}
 
-let newsUpdate: Story[]
+const initialState: StoriesState = {
+	stories: [],
+	status: 'idle',
+	error: null
+}
 
-fetch('http://localhost:8000/news')
-	.then((response) => response.json())
-	.then((data) => { newsUpdate = data })
+export const fetchStories = createAsyncThunk(
+	'stories/fetchStories',
+	async () => {
+		const response = await fetch('http://localhost:8000/news')
+			.then((response) => response.json())
+		console.log(response)
+		return response
+		//console.log("fetch" + await response)
+		//return (await response.json()) as Story[]
+	}
+)
 
 const storiesSlice = createSlice({
 	name: 'stories',
 	initialState,
 	reducers: {
+		//TODO
 		update: (state) => {
-			console.log(newsUpdate[0])
-			state[0].title = newsUpdate[0].title
+			state.stories[0].title = "TODO"
 		}
+	},
+	extraReducers(builder) {
+		builder
+			.addCase(fetchStories.pending, (state, action) => {
+				state.status = 'loading'
+			})
+			.addCase(fetchStories.fulfilled, (state, action) => {
+				state.status = 'succeeded'
+				state.stories = state.stories.concat(action.payload)
+			})
+			.addCase(fetchStories.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.error.message
+			})
 	}
 })
 
 export const { update } = storiesSlice.actions
-export const selectStories = (state: RootState) => state.news
+export const selectStories = (state: RootState) => state.stories
 export default storiesSlice.reducer
