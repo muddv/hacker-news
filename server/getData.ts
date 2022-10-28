@@ -23,8 +23,12 @@ async function queryStories(data: DataSnapshot[]) {
 	for (let i = 0; i < 5; i++) {
 		if (!storyIds.includes(data[i])) {
 			storyIds.push(data[i])
-			onValue(ref(db, `v0/item/${data[i]}`), (snapshot) => {
-				updateStories(snapshot.val())
+			onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
+				if (snapshot.exists()) {
+					//making a variable here for types to work correctly in next function
+					let updateData: Story = snapshot.val()
+					updateStories(updateData)
+				}
 			})
 		}
 	}
@@ -47,9 +51,11 @@ export let storyData: Story[] = []
 
 //@ts-ignore
 function updateStories(stories) {
-	//TODO filter this earlier
-	if (stories !== null) {
+	//TODO better filter logic
+	let allIds = storyData.map(item => item.id)
+	if (!allIds.includes(stories.id)) {
 		storyData.push(stories)
 	}
 	return storyData
+
 }

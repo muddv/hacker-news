@@ -19,8 +19,12 @@ async function queryStories(data) {
     for (let i = 0; i < 5; i++) {
         if (!storyIds.includes(data[i])) {
             storyIds.push(data[i]);
-            onValue(ref(db, `v0/item/${data[i]}`), (snapshot) => {
-                updateStories(snapshot.val());
+            onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
+                if (snapshot.exists()) {
+                    //making a variable here for types to work correctly in next function
+                    let updateData = snapshot.val();
+                    updateStories(updateData);
+                }
             });
         }
     }
@@ -28,8 +32,9 @@ async function queryStories(data) {
 export let storyData = [];
 //@ts-ignore
 function updateStories(stories) {
-    //TODO filter this earlier
-    if (stories !== null) {
+    console.log(stories.id);
+    let allIds = storyData.map(item => item.id);
+    if (!allIds.includes(stories.id)) {
         storyData.push(stories);
     }
     return storyData;

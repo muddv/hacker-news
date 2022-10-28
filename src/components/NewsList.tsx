@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
 
 import { useAppDispatch } from '../hooks/hooks'
 import { selectStories, fetchStories, Story } from '../stores/storiesSlice'
@@ -10,16 +9,19 @@ type props = {
 }
 
 function NewsItem({ story }: props) {
+	//TODO move date conversion to earlier stage
+	let storyDate = new Date(story.time).toString()
 	return (
 		<li
 			className='mt-2 bg-orange-100 border-orange-200 border-2'>
 			<b className='font-semibold'>
-				<Link to="/newsitem">{story.title}</Link>
+				<a href={story.url}>{story.title}</a>
 			</b>
+			<p className='font-bold'>ID: {story.id}</p>
 			<p className='text-slate-700'>
 				{story.score} points {}
 				by {story.by}
-				{} {story.time}
+				{} {storyDate}
 			</p>
 		</li>
 	)

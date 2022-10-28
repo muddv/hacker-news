@@ -31,10 +31,7 @@ export const fetchStories = createAsyncThunk(
 	async () => {
 		const response = await fetch('http://localhost:8000/news')
 			.then((response) => response.json())
-		console.log(response)
 		return response
-		//console.log("fetch" + await response)
-		//return (await response.json()) as Story[]
 	}
 )
 
