@@ -12,18 +12,25 @@ export async function getLatestStories() {
         queryStories(snapshot.val());
     });
 }
+let storyIds = [];
 async function queryStories(data) {
     //TODO change this to 100 later
     //TODO: check if shanpshots exist
     for (let i = 0; i < 5; i++) {
-        onValue(ref(db, `v0/item/${data[i]}`), (snapshot) => {
-            updateStories(snapshot.val());
-        });
+        if (!storyIds.includes(data[i])) {
+            storyIds.push(data[i]);
+            onValue(ref(db, `v0/item/${data[i]}`), (snapshot) => {
+                updateStories(snapshot.val());
+            });
+        }
     }
 }
 export let storyData = [];
 //@ts-ignore
 function updateStories(stories) {
-    storyData.push(stories);
+    //TODO filter this earlier
+    if (stories !== null) {
+        storyData.push(stories);
+    }
     return storyData;
 }

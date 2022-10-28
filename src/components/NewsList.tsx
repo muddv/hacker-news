@@ -2,39 +2,11 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { useAppSelector, useAppDispatch } from '../hooks/hooks'
-import { selectStories, update, fetchStories, Story } from '../stores/storiesSlice'
+import { useAppDispatch } from '../hooks/hooks'
+import { selectStories, fetchStories, Story } from '../stores/storiesSlice'
 
 type props = {
 	story: Story
-}
-
-function NewNews() {
-	const news = useSelector(selectStories)
-	const dispatch = useAppDispatch()
-
-	const storiesStatus = useSelector(selectStories)
-
-	useEffect(() => {
-		if (storiesStatus.status === 'idle') {
-			console.log("HERE")
-			dispatch(fetchStories())
-		}
-	}, [storiesStatus, dispatch])
-
-	let storySection = storiesStatus.stories
-		.filter(story => story !== null)
-		.map(story => <NewsItem story={story} />)
-
-	return (
-		<div>
-			<p>{storiesStatus.status}</p>
-			<p>{storiesStatus.status === 'succeeded' ? storySection : "loading"}</p>
-			<button onClick={() => console.log(storiesStatus)}>
-				update
-			</button>
-		</div>
-	)
 }
 
 function NewsItem({ story }: props) {
@@ -54,9 +26,23 @@ function NewsItem({ story }: props) {
 }
 
 export function NewsList() {
+	const dispatch = useAppDispatch()
+	const storiesStatus = useSelector(selectStories)
+
+	useEffect(() => {
+		if (storiesStatus.status === 'idle') {
+			dispatch(fetchStories())
+		}
+	}, [storiesStatus, dispatch])
+
+	let storySection = storiesStatus.stories
+		//TODO filter data before getting here
+		.filter(story => story !== null)
+		.map(story => <NewsItem story={story} key={story.id} />)
+
 	return (
-		<div className='w-3/5'>
-			<NewNews />
+		<div className='w-2/3'>
+			<ul>{storiesStatus.status === 'succeeded' ? storySection : "loading"}</ul>
 		</div>
 	)
 }
