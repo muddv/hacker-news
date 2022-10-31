@@ -1,4 +1,4 @@
-import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
 export interface Story {
@@ -35,6 +35,15 @@ export const fetchStories = createAsyncThunk(
 	}
 )
 
+export const updateStories = createAsyncThunk(
+	'stories/updateStories',
+	async () => {
+		const response = await fetch('http://localhost:8000/update-news')
+			.then((response) => response.json())
+		return response
+	}
+)
+
 const storiesSlice = createSlice({
 	name: 'stories',
 	initialState,
@@ -54,6 +63,17 @@ const storiesSlice = createSlice({
 				state.stories = state.stories.concat(action.payload)
 			})
 			.addCase(fetchStories.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.error.message
+			})
+			.addCase(updateStories.pending, (state, action) => {
+				state.status = 'loading'
+			})
+			.addCase(updateStories.fulfilled, (state, action) => {
+				state.status = 'succeeded'
+				state.stories = state.stories.concat(action.payload)
+			})
+			.addCase(updateStories.rejected, (state, action) => {
 				state.status = 'failed'
 				state.error = action.error.message
 			})

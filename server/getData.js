@@ -23,19 +23,22 @@ async function queryStories(data) {
                 if (snapshot.exists()) {
                     //making a variable here for types to work correctly in next function
                     let updateData = snapshot.val();
-                    updateStories(updateData);
+                    updateStoryData(updateData);
                 }
             });
         }
     }
 }
 export let storyData = [];
-//@ts-ignore
-function updateStories(stories) {
-    console.log(stories.id);
+function updateStoryData(story) {
+    //TODO better filter logic
     let allIds = storyData.map(item => item.id);
-    if (!allIds.includes(stories.id)) {
-        storyData.push(stories);
+    if (!allIds.includes(story.id)) {
+        storyData.push(story);
     }
     return storyData;
+}
+export let recievedIndex;
+export function updateRecievedIndex(index) {
+    return recievedIndex = index;
 }

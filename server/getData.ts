@@ -27,7 +27,7 @@ async function queryStories(data: DataSnapshot[]) {
 				if (snapshot.exists()) {
 					//making a variable here for types to work correctly in next function
 					let updateData: Story = snapshot.val()
-					updateStories(updateData)
+					updateStoryData(updateData)
 				}
 			})
 		}
@@ -49,13 +49,16 @@ interface Story {
 
 export let storyData: Story[] = []
 
-//@ts-ignore
-function updateStories(stories) {
+function updateStoryData(story: Story) {
 	//TODO better filter logic
 	let allIds = storyData.map(item => item.id)
-	if (!allIds.includes(stories.id)) {
-		storyData.push(stories)
+	if (!allIds.includes(story!.id)) {
+		storyData.push(story!)
 	}
 	return storyData
+}
 
+export let recievedIndex: number
+export function updateRecievedIndex(index: number) {
+	return recievedIndex = index
 }

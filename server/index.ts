@@ -1,18 +1,21 @@
 import express from 'express'
 import dotenv from 'dotenv'
 
-import { getLatestStories, storyData } from './getData.js'
+import { getLatestStories, storyData, recievedIndex, updateRecievedIndex } from './getData.js'
 
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT
 
-
-app.get('favicon.ico', (req, res) => res.status(204))
-
 app.get('/news', (req, res) => {
 	res.json(storyData)
+	updateRecievedIndex(storyData.length)
+})
+
+app.get('/update-news', (req, res) => {
+	res.json(storyData.slice(recievedIndex))
+	updateRecievedIndex(storyData.length)
 })
 
 await getLatestStories()

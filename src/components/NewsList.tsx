@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { useAppDispatch } from '../hooks/hooks'
-import { selectStories, fetchStories, Story } from '../stores/storiesSlice'
+import { selectStories, fetchStories, Story, updateStories } from '../stores/storiesSlice'
 
 type props = {
 	story: Story
@@ -35,15 +35,24 @@ export function NewsList() {
 		if (storiesStatus.status === 'idle') {
 			dispatch(fetchStories())
 		}
+		console.log(storiesStatus.stories)
 	}, [storiesStatus, dispatch])
 
-	let storySection = storiesStatus.stories
-		//TODO filter data before getting here
-		.filter(story => story !== null)
+	let storySection: JSX.Element[] = []
+	storySection = storiesStatus.stories
 		.map(story => <NewsItem story={story} key={story.id} />)
+
+	function storiesUpdate() {
+		dispatch(updateStories())
+	}
 
 	return (
 		<div className='w-2/3'>
+			<button
+				onClick={storiesUpdate}
+				className="border-black border-2 hover:bg-slate-400 p-2">
+				Load more stories
+			</button>
 			<ul>{storiesStatus.status === 'succeeded' ? storySection : "loading"}</ul>
 		</div>
 	)
