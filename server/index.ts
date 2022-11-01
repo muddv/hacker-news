@@ -10,11 +10,15 @@ const port = process.env.PORT
 
 app.get('/news', (req, res) => {
 	res.json(storyData)
+	console.log("recievedIndex" + recievedIndex)
 	updateRecievedIndex(storyData.length)
 })
 
+//TODO make client submit it's own unique index, 
+//otherwise this code would only work for one client at a time
 app.get('/update-news', (req, res) => {
 	res.json(storyData.slice(recievedIndex))
+	console.log("recievedIndex" + recievedIndex)
 	updateRecievedIndex(storyData.length)
 })
 

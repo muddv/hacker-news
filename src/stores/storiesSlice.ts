@@ -60,18 +60,20 @@ const storiesSlice = createSlice({
 			})
 			.addCase(fetchStories.fulfilled, (state, action) => {
 				state.status = 'succeeded'
-				state.stories = state.stories.concat(action.payload)
+				//TODO make sure reverse does not cause problems if 
+				//client remains active for a long time
+				state.stories = state.stories.concat(action.payload).reverse()
 			})
 			.addCase(fetchStories.rejected, (state, action) => {
 				state.status = 'failed'
 				state.error = action.error.message
 			})
 			.addCase(updateStories.pending, (state, action) => {
-				state.status = 'loading'
+				state.status = 'updating'
 			})
 			.addCase(updateStories.fulfilled, (state, action) => {
-				state.status = 'succeeded'
-				state.stories = state.stories.concat(action.payload)
+				state.status = 'updated'
+				state.stories = action.payload.concat(state.stories)
 			})
 			.addCase(updateStories.rejected, (state, action) => {
 				state.status = 'failed'
