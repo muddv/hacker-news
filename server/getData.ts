@@ -8,7 +8,6 @@ const app = initializeApp(config)
 const db = getDatabase(app)
 
 export async function getLatestStories() {
-	//TODO: check if shanpshots exist
 	let newStories = ref(db, "v0/newstories")
 	onValue(newStories, (snapshot) => {
 		queryStories(snapshot.val())
@@ -18,14 +17,11 @@ export async function getLatestStories() {
 let storyIds: DataSnapshot[] = []
 
 async function queryStories(data: DataSnapshot[]) {
-	//TODO change this to 100 later
-	//TODO: check if shanpshots exist
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < 100; i++) {
 		if (!storyIds.includes(data[i])) {
 			storyIds.push(data[i])
 			onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
-				if (snapshot.exists()) {
-					//making a variable here for types to work correctly in next function
+			if (snapshot.exists()) {
 					let story: Story = snapshot.val()
 					updateStoryData(story)
 				}
@@ -35,10 +31,8 @@ async function queryStories(data: DataSnapshot[]) {
 }
 
 export async function getComments(commentIds: Comment["id"][]) {
-	console.log("getComments")
 	let comments: Comment[] = []
 	await Promise.all(commentIds.map(async (commentId) => {
-		console.log("PROMISE")
 		let reference = ref(db, `v0/item/${commentId}`)
 		let snapshot = await get(reference).then((snapshot) => {
 			if (snapshot.exists()) {
@@ -46,11 +40,10 @@ export async function getComments(commentIds: Comment["id"][]) {
 			}
 		})
 	}))
-	console.log(comments)
 	return comments
 }
 
-//TODO put types in another place
+//TODO move types to more sensible place
 interface Story {
 	by: string,
 	descendants: number,
@@ -60,7 +53,8 @@ interface Story {
 	titile: string,
 	time: number,
 	type: 'story',
-	url: string
+	url: string,
+	dead?: boolean
 }
 
 interface Comment {

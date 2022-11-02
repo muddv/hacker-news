@@ -10,8 +10,6 @@ import {
 	getComments
 }
 	from './getData.js'
-import { async } from '@firebase/util'
-
 
 dotenv.config()
 
@@ -40,7 +38,6 @@ app.route('/comments')
 		let commentIds = req.body.commentIds
 			.split(',')
 			.map((i: String) => Number(i))
-		console.log(commentIds)
 		try {
 			let comments = await (getComments(commentIds))
 				.then((comments) => res.json(comments))

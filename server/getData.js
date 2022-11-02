@@ -15,8 +15,7 @@ export async function getLatestStories() {
 let storyIds = [];
 async function queryStories(data) {
     //TODO change this to 100 later
-    //TODO: check if shanpshots exist
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 100; i++) {
         if (!storyIds.includes(data[i])) {
             storyIds.push(data[i]);
             onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
@@ -30,10 +29,8 @@ async function queryStories(data) {
     }
 }
 export async function getComments(commentIds) {
-    console.log("getComments");
     let comments = [];
     await Promise.all(commentIds.map(async (commentId) => {
-        console.log("PROMISE");
         let reference = ref(db, `v0/item/${commentId}`);
         let snapshot = await get(reference).then((snapshot) => {
             if (snapshot.exists()) {
@@ -41,7 +38,6 @@ export async function getComments(commentIds) {
             }
         });
     }));
-    console.log(comments);
     return comments;
 }
 export let storyData = [];

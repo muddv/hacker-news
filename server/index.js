@@ -24,7 +24,6 @@ app.route('/comments')
     let commentIds = req.body.commentIds
         .split(',')
         .map((i) => Number(i));
-    console.log(commentIds);
     try {
         let comments = await (getComments(commentIds))
             .then((comments) => res.json(comments));

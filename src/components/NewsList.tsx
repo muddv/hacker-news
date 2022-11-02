@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 
 import { useAppDispatch } from '../hooks/hooks'
 import {
@@ -18,7 +18,6 @@ function NewsItem({ story }: props) {
 	let storyDate = new Date(story.time * 1000).toLocaleString()
 	const [goToStory, setGoToStory] = useState(false)
 	if (goToStory) return <Navigate to={`/${story.id}`} />
-
 	return (
 		<li onClick={() => setGoToStory(true)}
 			className='cursor-pointer w-5/6 text-black mt-3 bg-orange-100 border-orange-200 border-2 p-5 hover:bg-orange-200 hover:border-orange-400'>
@@ -55,7 +54,6 @@ export function NewsList() {
 			storiesStatus.stories.length > storySection.length) {
 			updateStorySection()
 		}
-		console.log(storiesStatus.stories)
 	}, [storiesStatus.status])
 
 	useEffect(() => {
@@ -74,7 +72,6 @@ export function NewsList() {
 	}
 
 	function storiesUpdate() {
-		console.warn("storiesUpdate" + new Date())
 		dispatch(updateStories())
 		setShowNewAlert(true)
 		setTimeout(() => {

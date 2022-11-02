@@ -17,15 +17,34 @@ interface props {
 	comment: Comment
 }
 function CommentItem({ comment }: props) {
+	const dispatch = useAppDispatch()
+	const commentsStatus = useSelector(selectComments)
+
 	function loadDescendants() {
-		console.log(comment.kids)
+		dispatch(fetchComments(comment.kids))
 	}
+
+	useEffect(() => {
+		if (commentsStatus.status === 'succeeded') {
+			updateDescendants()
+		}
+	}, [commentsStatus.status])
+
+	const initialDescendantState: JSX.Element[] = []
+	const [descendantComments, setDescendantComments] = useState(initialDescendantState)
+
+	function updateDescendants() {
+	}
+
 	return (
 		<li
-			className='bg-orange-100 text-black border-2 border-slate-900 p-5 lg:w-5/6 mt-3'
-			onClick={loadDescendants}>
-			<p className='text-gray-700'>{comment.by} at {comment.time}</p>
+			className='bg-orange-100 text-black border-2 border-slate-900 p-5 lg:w-5/6 mt-3'>
+			<p className='text-gray-700'>{comment.by} at {comment.time} wrote</p>
 			<p>{comment.text}</p>
+			<p className='text-gray-700 hover:underline cursor-pointer'
+				onClick={loadDescendants}>{comment.kids ?
+					comment.kids.length > 1 ? comment.kids.length + " replies" : comment.kids.length + " reply"
+					: null}</p>
 		</li>
 	)
 }
@@ -54,28 +73,25 @@ export function StoryPage() {
 
 	function updateCommentSection() {
 		if (commentsStatus.comments.length > 0) {
-			console.log("here")
 			let updatedComments = commentsStatus.comments
 				.map(comment => <CommentItem key={comment.id} comment={comment} />)
 			setCommentSection(updatedComments)
 		}
-		else {
-			console.log("nope")
-			setCommentSection([<p>no comments yet</p>])
-		}
 	}
 
 	return (
-		<div className='bg-slate-700 text-neutral-50 p-5 h-screen'>
-			<div className='mx-auto lg:w-1/2'>
-				<Header />
-				<main>
-					<h1 className='font-semibold'>{currentStory.title}</h1>
-					<button onClick={() => dispatch(fetchComments(currentStory.kids))} 
-					className='border-black border-2 bg-neutral-200 text-slate-900 hover:bg-slate-400 p-1'>Load new comments</button>
-					<ul>{commentSection}</ul>
-				</main>
-				<Footer />
+		<div className='h-full bg-slate-700'>
+			<div className='bg-slate-700 text-neutral-50 p-5 h-screen'>
+				<div className='mx-auto lg:w-1/2'>
+					<Header />
+					<main>
+						<h1 className='font-semibold'>{currentStory.title}</h1>
+						<button onClick={() => dispatch(fetchComments(currentStory.kids))}
+							className='border-black border-2 bg-neutral-200 text-slate-900 hover:bg-slate-400 p-1'>Load new comments</button>
+						<ul>{commentSection}</ul>
+					</main>
+					<Footer />
+				</div>
 			</div>
 		</div>
 	)
