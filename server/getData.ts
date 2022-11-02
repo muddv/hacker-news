@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { DataSnapshot, getDatabase, onValue, ref } from 'firebase/database'
+import { DataSnapshot, getDatabase, onValue, ref, get } from 'firebase/database'
 
 const config = {
 	databaseURL: "https://hacker-news.firebaseio.com",
@@ -26,12 +26,28 @@ async function queryStories(data: DataSnapshot[]) {
 			onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
 				if (snapshot.exists()) {
 					//making a variable here for types to work correctly in next function
-					let updateData: Story = snapshot.val()
-					updateStoryData(updateData)
+					let story: Story = snapshot.val()
+					updateStoryData(story)
 				}
 			})
 		}
 	}
+}
+
+export async function getComments(commentIds: Comment["id"][]) {
+	console.log("getComments")
+	let comments: Comment[] = []
+	await Promise.all(commentIds.map(async (commentId) => {
+		console.log("PROMISE")
+		let reference = ref(db, `v0/item/${commentId}`)
+		let snapshot = await get(reference).then((snapshot) => {
+			if (snapshot.exists()) {
+				comments.push(snapshot.val())
+			}
+		})
+	}))
+	console.log(comments)
+	return comments
 }
 
 //TODO put types in another place
@@ -45,6 +61,16 @@ interface Story {
 	time: number,
 	type: 'story',
 	url: string
+}
+
+interface Comment {
+	by: string,
+	id: number,
+	kids: number[],
+	parent: number,
+	text: string,
+	time: number,
+	type: 'comment'
 }
 
 export let storyData: Story[] = []

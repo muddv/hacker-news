@@ -3,7 +3,7 @@ import { NewsList } from './NewsList'
 
 export function App() {
 	return (
-		<div className="m-10">
+		<div className="bg-slate-700 text-neutral-50">
 			<Header />
 			<NewsList />
 		</div>

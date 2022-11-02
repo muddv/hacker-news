@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 
 import { store } from './stores/store'
 import { App } from './components/App'
+import { StoryPage } from './components/StoryPage'
 import './styles/index.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<App />} />
+					<Route path="/:storyId" element={<StoryPage />} />
 				</Routes>
 			</BrowserRouter>
 		</Provider>

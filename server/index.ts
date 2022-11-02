@@ -1,16 +1,30 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
+import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 
-import { getLatestStories, storyData, recievedIndex, updateRecievedIndex } from './getData.js'
+import {
+	getLatestStories,
+	storyData,
+	recievedIndex,
+	updateRecievedIndex,
+	getComments
+}
+	from './getData.js'
+import { async } from '@firebase/util'
+
 
 dotenv.config()
 
 const app = express()
+app.use(bodyParser.urlencoded({ extended: true }))
 const port = process.env.PORT
+
+app.get('/favico.ico', (req, res) => {
+	res.sendStatus(204).end();
+});
 
 app.get('/news', (req, res) => {
 	res.json(storyData)
-	console.log("recievedIndex" + recievedIndex)
 	updateRecievedIndex(storyData.length)
 })
 
@@ -18,9 +32,23 @@ app.get('/news', (req, res) => {
 //otherwise this code would only work for one client at a time
 app.get('/update-news', (req, res) => {
 	res.json(storyData.slice(recievedIndex))
-	console.log("recievedIndex" + recievedIndex)
 	updateRecievedIndex(storyData.length)
 })
+
+app.route('/comments')
+	.post(async (req: express.Request, res: express.Response) => {
+		let commentIds = req.body.commentIds
+			.split(',')
+			.map((i: String) => Number(i))
+		console.log(commentIds)
+		try {
+			let comments = await (getComments(commentIds))
+				.then((comments) => res.json(comments))
+		}
+		catch (err) {
+			res.send(err)
+		}
+	})
 
 await getLatestStories()
 

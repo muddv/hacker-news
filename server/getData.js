@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, onValue, ref } from 'firebase/database';
+import { getDatabase, onValue, ref, get } from 'firebase/database';
 const config = {
     databaseURL: "https://hacker-news.firebaseio.com",
 };
@@ -22,12 +22,27 @@ async function queryStories(data) {
             onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
                 if (snapshot.exists()) {
                     //making a variable here for types to work correctly in next function
-                    let updateData = snapshot.val();
-                    updateStoryData(updateData);
+                    let story = snapshot.val();
+                    updateStoryData(story);
                 }
             });
         }
     }
+}
+export async function getComments(commentIds) {
+    console.log("getComments");
+    let comments = [];
+    await Promise.all(commentIds.map(async (commentId) => {
+        console.log("PROMISE");
+        let reference = ref(db, `v0/item/${commentId}`);
+        let snapshot = await get(reference).then((snapshot) => {
+            if (snapshot.exists()) {
+                comments.push(snapshot.val());
+            }
+        });
+    }));
+    console.log(comments);
+    return comments;
 }
 export let storyData = [];
 function updateStoryData(story) {
