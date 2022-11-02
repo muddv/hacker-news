@@ -10,7 +10,8 @@ export interface Story {
 	title: string,
 	time: number,
 	type: 'story',
-	url: string
+	url: string,
+	dead?: boolean
 }
 
 interface StoriesState {

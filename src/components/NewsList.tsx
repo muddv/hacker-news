@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { useAppDispatch } from '../hooks/hooks'
 import {
@@ -15,17 +15,19 @@ type props = {
 }
 
 function NewsItem({ story }: props) {
-	//TODO move date conversion to earlier stage
-	//TODO more sensible date formatting
 	let storyDate = new Date(story.time * 1000).toLocaleString()
+	const [goToStory, setGoToStory] = useState(false)
+	if (goToStory) return <Navigate to={`/${story.id}`} />
+
 	return (
-		<li
-			className='text-black mt-2 bg-orange-100 border-orange-200 border-2 p-5'>
-			<b className='font-semibold'>
-				<a href={story.url}>{story.title}</a>
+		<li onClick={() => setGoToStory(true)}
+			className='cursor-pointer w-5/6 text-black mt-3 bg-orange-100 border-orange-200 border-2 p-5 hover:bg-orange-200 hover:border-orange-400'>
+			<b onClick={() => null}
+				className='text-xl font-semibold hover:underline'>
+				<a onClick={(e) => e.stopPropagation()}
+					href={story.url}>{story.title}</a>
 			</b>
 			<p className='font-semibold'>
-				<Link to={`/${story.id}`}>StoryPage</Link>
 				<span>{story.descendants} comments</span>
 			</p>
 			<p className='text-slate-700'>
@@ -66,6 +68,7 @@ export function NewsList() {
 
 	function updateStorySection() {
 		let currentStories = storiesStatus.stories
+			.filter(story => !story.dead)
 			.map(story => <NewsItem story={story} key={story.id} />)
 		setStorySection(currentStories)
 	}
@@ -87,19 +90,19 @@ export function NewsList() {
 	}
 
 	return (
-			<main className='mx-auto md:w-1/2'>
-				{showNewAlert ? <button
-					onClick={handleScrollToNew}
-					className='ml-[300px] px-2 py-1 fixed bg-orange-200 border-2 border-black rounded-2xl'
-				>New Stories!
-				</button> : null}
-				<button
-					onClick={() => dispatch(updateStories())}
-					className="border-black border-2 hover:bg-slate-400 p-2">
-					Load more stories
-				</button>
-				<ul>{storySection ? storySection : "loading"}</ul>
-			</main>
+		<main>
+			{showNewAlert ? <button
+				onClick={handleScrollToNew}
+				className='ml-[300px] font-semibold text-slate-900 p-2 py-1 fixed bg-orange-200 border-2 border-black rounded-2xl'
+			>New Stories!
+			</button> : null}
+			<button
+				onClick={() => dispatch(updateStories())}
+				className="border-black border-2 bg-neutral-200 text-slate-900 hover:bg-slate-400 p-1">
+				Load more stories
+			</button>
+			<ul>{storySection ? storySection : "loading"}</ul>
+		</main>
 	)
 }
 

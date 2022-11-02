@@ -4,7 +4,7 @@ import type { RootState } from './store'
 
 import { Story } from './storiesSlice'
 
-interface Comment {
+export interface Comment {
 	by: string,
 	id: number,
 	kids: number[],
