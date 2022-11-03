@@ -6,7 +6,6 @@ const config = {
 const app = initializeApp(config);
 const db = getDatabase(app);
 export async function getLatestStories() {
-    //TODO: check if shanpshots exist
     let newStories = ref(db, "v0/newstories");
     onValue(newStories, (snapshot) => {
         queryStories(snapshot.val());
@@ -14,13 +13,11 @@ export async function getLatestStories() {
 }
 let storyIds = [];
 async function queryStories(data) {
-    //TODO change this to 100 later
     for (let i = 0; i < 100; i++) {
         if (!storyIds.includes(data[i])) {
             storyIds.push(data[i]);
             onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
                 if (snapshot.exists()) {
-                    //making a variable here for types to work correctly in next function
                     let story = snapshot.val();
                     updateStoryData(story);
                 }

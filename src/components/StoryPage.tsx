@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 import { useAppDispatch } from '../hooks/hooks'
 import {
@@ -56,6 +56,11 @@ export function StoryPage() {
 	const dispatch = useAppDispatch()
 	const commentsStatus = useSelector(selectComments)
 	const storiesStatus = useSelector(selectStories)
+	
+	if (id.storyId && storiesStatus.status === 'idle') {
+		return <Navigate to='/' />
+	}
+
 	const currentStory = storiesStatus.stories
 		.filter(story => story.id === Number(id.storyId))[0]
 
@@ -70,6 +75,7 @@ export function StoryPage() {
 			setCommentSection([<p>No comments yet</p>])
 		}
 	}, [commentsStatus.status])
+
 
 	function updateCommentSection() {
 		if (commentsStatus.comments.length > 0) {
