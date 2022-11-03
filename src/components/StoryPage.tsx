@@ -102,7 +102,7 @@ export function StoryPage() {
 
 	return (
 		<div className='h-full bg-slate-700'>
-			<div className='bg-slate-700 text-neutral-50 p-5 h-screen'>
+			<div className='text-neutral-50 p-5'>
 				<div className='mx-auto lg:w-1/2'>
 					<Header />
 					<main>
@@ -111,9 +111,9 @@ export function StoryPage() {
 							className='border-black border-2 bg-neutral-200 text-slate-900 mt-3 hover:bg-slate-400 p-1'>Load new comments</button>
 						<ul>{commentSection}</ul>
 					</main>
-					<Footer />
 				</div>
 			</div>
+			<Footer />
 		</div>
 	)
 }

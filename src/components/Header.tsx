@@ -21,7 +21,7 @@ export function Header() {
 			<h1 className={id.storyId ?
 				"mr-auto font-bold text-2xl text-orange-500 hover:underline" :
 				"mr-auto font-bold text-2xl text-orange-500"}>
-				Hacker News
+				Hacker News 2
 			</h1>
 		</header>
 	)

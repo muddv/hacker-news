@@ -1,7 +1,7 @@
 export function Footer() {
 	return (
 		<footer>
-			<p className="text-gray-700">Made with Hacker News API</p>
+			<p className="text-neutral-50 mt-5 text-center">Made with Hacker News API</p>
 		</footer>
 	)
 }

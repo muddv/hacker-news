@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { useAppDispatch } from '../hooks/hooks'
 import {
@@ -20,7 +20,7 @@ function NewsItem({ story }: props) {
 	if (goToStory) return <Navigate to={`/${story.id}`} />
 	return (
 		<li onClick={() => setGoToStory(true)}
-			className='cursor-pointer w-5/6 text-black mt-3 bg-orange-100 border-orange-200 border-2 p-5 hover:bg-orange-200 hover:border-orange-400'>
+			className='truncate cursor-pointer w-5/6 text-black mt-3 bg-orange-100 border-orange-200 border-2 p-5 hover:bg-orange-200 hover:border-orange-400'>
 			<b onClick={() => null}
 				className='text-xl font-semibold hover:underline'>
 				<a onClick={(e) => e.stopPropagation()}
