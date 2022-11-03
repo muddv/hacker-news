@@ -30,7 +30,7 @@ function NewsItem({ story }: props) {
 				<span>{story.descendants} comments</span>
 			</p>
 			<p className='text-slate-700'>
-				{story.score} points {}
+				{story.score} {story.score > 1 ? "points" : "point"} {}
 				by {story.by}
 				{} {storyDate}
 			</p>
