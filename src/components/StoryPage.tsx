@@ -25,14 +25,6 @@ function CommentItem({ comment }: props) {
 		dispatch(fetchDescendants(comment.kids))
 	}
 
-	useEffect(() => {
-		if (commentsStatus.status === 'loaded-replies') {
-			console.log("HERE")
-			//let replies = commentsStatus.comments[commentsStatus.comments.findIndex(cmt => cmt.id === comment.id)].replies
-			//updateDescendants(replies!)
-		}
-	}, [commentsStatus.status])
-
 	let replies
 	if (comment.replies) {
 		replies = comment.replies.map(reply =>
@@ -43,7 +35,7 @@ function CommentItem({ comment }: props) {
 		<li
 			className='bg-orange-100 text-black border-2 border-slate-900 p-5 lg:w-5/6 mt-3'>
 			<p className='text-gray-700'>{comment.by} at {commentDate} wrote</p>
-			<p>{comment.text}</p>
+			<p dangerouslySetInnerHTML={{ __html: comment.text }}></p>
 			<p className='text-gray-700 hover:underline cursor-pointer'
 				onClick={loadDescendants}>{comment.kids ?
 					comment.kids.length > 1 ? comment.kids.length + " replies" : comment.kids.length + " reply"

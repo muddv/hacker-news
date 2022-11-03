@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-		"start": "tsc && vite build && vite preview --port 3000",
+    "start": "tsc && vite build && vite preview --port 3000",
     "server": "tsc --project ./server/tsconfig.json && node ./server/index.js"
   },
   "dependencies": {
