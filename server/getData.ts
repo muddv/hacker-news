@@ -1,3 +1,4 @@
+
 import { initializeApp } from 'firebase/app'
 import { DataSnapshot, getDatabase, onValue, ref, get } from 'firebase/database'
 
@@ -21,7 +22,7 @@ async function queryStories(data: DataSnapshot[]) {
 		if (!storyIds.includes(data[i])) {
 			storyIds.push(data[i])
 			onValue(ref(db, `v0/item/${storyIds[storyIds.length - 1]}`), (snapshot) => {
-			if (snapshot.exists()) {
+				if (snapshot.exists()) {
 					let story: Story = snapshot.val()
 					updateStoryData(story)
 				}
@@ -34,9 +35,14 @@ export async function getComments(commentIds: Comment["id"][]) {
 	let comments: Comment[] = []
 	await Promise.all(commentIds.map(async (commentId) => {
 		let reference = ref(db, `v0/item/${commentId}`)
-		let snapshot = await get(reference).then((snapshot) => {
+		let snapshot = await get(reference).then(async (snapshot) => {
 			if (snapshot.exists()) {
-				comments.push(snapshot.val())
+				let comment = snapshot.val()
+				if (!storyData.map(story => story.id).includes(comment.parent)
+					&& comment.kids) {
+					comment.replies = await getComments(comment.kids)
+				}
+				comments.push(comment)
 			}
 		})
 	}))
@@ -65,6 +71,7 @@ interface Comment {
 	text: string,
 	time: number,
 	type: 'comment'
+	replies?: Comment[]
 }
 
 export let storyData: Story[] = []
@@ -82,3 +89,4 @@ export let recievedIndex: number
 export function updateRecievedIndex(index: number) {
 	return recievedIndex = index
 }
+

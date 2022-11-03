@@ -6,9 +6,10 @@ import { useAppDispatch } from '../hooks/hooks'
 import {
 	selectComments,
 	fetchComments,
+	fetchDescendants,
 	Comment
 } from '../stores/commentsSlice'
-import { fetchStories, selectStories } from '../stores/storiesSlice'
+import { selectStories } from '../stores/storiesSlice'
 import { Header } from './Header'
 import { Footer } from './Footer'
 
@@ -21,30 +22,33 @@ function CommentItem({ comment }: props) {
 	const commentsStatus = useSelector(selectComments)
 
 	function loadDescendants() {
-		dispatch(fetchComments(comment.kids))
+		dispatch(fetchDescendants(comment.kids))
 	}
 
 	useEffect(() => {
-		if (commentsStatus.status === 'succeeded') {
-			updateDescendants()
+		if (commentsStatus.status === 'loaded-replies') {
+			console.log("HERE")
+			//let replies = commentsStatus.comments[commentsStatus.comments.findIndex(cmt => cmt.id === comment.id)].replies
+			//updateDescendants(replies!)
 		}
 	}, [commentsStatus.status])
 
-	const initialDescendantState: JSX.Element[] = []
-	const [descendantComments, setDescendantComments] = useState(initialDescendantState)
-
-	function updateDescendants() {
+	let replies
+	if (comment.replies) {
+		replies = comment.replies.map(reply =>
+			<CommentItem key={reply.id} comment={reply} />)
 	}
-
+	let commentDate = new Date(comment.time * 1000).toLocaleString()
 	return (
 		<li
 			className='bg-orange-100 text-black border-2 border-slate-900 p-5 lg:w-5/6 mt-3'>
-			<p className='text-gray-700'>{comment.by} at {comment.time} wrote</p>
+			<p className='text-gray-700'>{comment.by} at {commentDate} wrote</p>
 			<p>{comment.text}</p>
 			<p className='text-gray-700 hover:underline cursor-pointer'
 				onClick={loadDescendants}>{comment.kids ?
 					comment.kids.length > 1 ? comment.kids.length + " replies" : comment.kids.length + " reply"
 					: null}</p>
+			<ul>{replies}</ul>
 		</li>
 	)
 }
@@ -56,7 +60,7 @@ export function StoryPage() {
 	const dispatch = useAppDispatch()
 	const commentsStatus = useSelector(selectComments)
 	const storiesStatus = useSelector(selectStories)
-	
+
 	if (id.storyId && storiesStatus.status === 'idle') {
 		return <Navigate to='/' />
 	}
@@ -72,17 +76,36 @@ export function StoryPage() {
 			updateCommentSection()
 		}
 		if (commentsStatus.status === 'rejected') {
+			//TODO show placeholder if there are no comments
 			setCommentSection([<p>No comments yet</p>])
 		}
+		if (commentsStatus.status.includes('loaded-replies')) {
+			let parentIndex = commentsStatus.status.slice(15).trim()
+			console.log("here " + parentIndex)
+			let index = Number(parentIndex)
+			console.log("converting")
+			console.log(index)
+			console.log(typeof (index))
+			updateReplies(Number(parentIndex))
+		}
 	}, [commentsStatus.status])
-
 
 	function updateCommentSection() {
 		if (commentsStatus.comments.length > 0) {
 			let updatedComments = commentsStatus.comments
 				.map(comment => <CommentItem key={comment.id} comment={comment} />)
-			setCommentSection(updatedComments)
+			if (updatedComments !== commentSection) {
+				console.log("here")
+				setCommentSection(updatedComments)
+			}
 		}
+	}
+
+	function updateReplies(index: number) {
+		let updatedComments = [...commentSection]
+		updatedComments[index] = <CommentItem key={commentsStatus.comments[index].id}
+			comment={commentsStatus.comments[index]} />
+		setCommentSection(updatedComments)
 	}
 
 	return (
@@ -93,7 +116,7 @@ export function StoryPage() {
 					<main>
 						<h1 className='font-semibold'>{currentStory.title}</h1>
 						<button onClick={() => dispatch(fetchComments(currentStory.kids))}
-							className='border-black border-2 bg-neutral-200 text-slate-900 hover:bg-slate-400 p-1'>Load new comments</button>
+							className='border-black border-2 bg-neutral-200 text-slate-900 mt-3 hover:bg-slate-400 p-1'>Load new comments</button>
 						<ul>{commentSection}</ul>
 					</main>
 					<Footer />

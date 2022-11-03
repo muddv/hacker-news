@@ -12,6 +12,7 @@ export interface Comment {
 	text: string,
 	time: number,
 	type: 'comment'
+	replies?: Comment[]
 }
 
 interface CommentState {
@@ -40,6 +41,22 @@ export const fetchComments = createAsyncThunk(
 	}
 )
 
+//export const fetchDescendants = fetchComments
+//
+export const fetchDescendants = createAsyncThunk(
+	'comments/fetchDescendants',
+	async (commentIds: Story["id"][]) => {
+		const response = await fetch('http://localhost:8000/comments', {
+			method: 'POST',
+			body: new URLSearchParams({
+				'commentIds': `${commentIds.join()}`
+			})
+		}).then((response) => response.json())
+		return response
+	}
+)
+
+
 const commentsSlice = createSlice({
 	name: 'comments',
 	initialState,
@@ -54,6 +71,20 @@ const commentsSlice = createSlice({
 				state.comments = action.payload
 			})
 			.addCase(fetchComments.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.error.message
+			})
+			.addCase(fetchDescendants.pending, (state, action) => {
+				state.status = 'loading'
+			})
+			.addCase(fetchDescendants.fulfilled, (state, action) => {
+				let parentIndex = state.comments.findIndex
+					(comment => comment.id === action.payload[0].parent)
+				state.status = `loaded-replies-${parentIndex}`
+				state.comments[parentIndex].replies
+					= action.payload
+			})
+			.addCase(fetchDescendants.rejected, (state, action) => {
 				state.status = 'failed'
 				state.error = action.error.message
 			})

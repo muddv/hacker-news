@@ -29,9 +29,14 @@ export async function getComments(commentIds) {
     let comments = [];
     await Promise.all(commentIds.map(async (commentId) => {
         let reference = ref(db, `v0/item/${commentId}`);
-        let snapshot = await get(reference).then((snapshot) => {
+        let snapshot = await get(reference).then(async (snapshot) => {
             if (snapshot.exists()) {
-                comments.push(snapshot.val());
+                let comment = snapshot.val();
+                if (!storyData.map(story => story.id).includes(comment.parent)
+                    && comment.kids) {
+                    comment.replies = await getComments(comment.kids);
+                }
+                comments.push(comment);
             }
         });
     }));
