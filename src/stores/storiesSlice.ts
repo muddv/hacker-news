@@ -48,12 +48,7 @@ export const updateStories = createAsyncThunk(
 const storiesSlice = createSlice({
 	name: 'stories',
 	initialState,
-	reducers: {
-		//TODO
-		update: (state) => {
-			state.stories[0].title = "TODO"
-		}
-	},
+	reducers: {},
 	extraReducers(builder) {
 		builder
 			.addCase(fetchStories.pending, (state, action) => {
